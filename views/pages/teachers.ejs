@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body class="container">
+
+	<header>
+		<% include ../partials/head_of_year_group_header %>
+	</header>
+
+	<div>
+		<% for(let teacher in data) { %>
+			<div style="border:1px solid black;">
+				Name: <%= data[teacher].first_name %>
+				<%= data[teacher].last_name %>
+				Email: <%= data[teacher].email %>
+				Classes: <%= data[teacher].classes %>
+			</div>
+		<% } %>
+	</div>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+</html>
