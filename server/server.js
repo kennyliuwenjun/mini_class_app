@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser  = require("body-parser");
-const {dataformat} = require("./utils");
+const {peopleformat,oneClassFormat} = require("./utils");
 
 const app = express();
 // const clientPtah = path.join(__dirname,'../client');
@@ -30,6 +30,14 @@ app.get('/', (req, res) => {
 //show teachers page
 app.get('/head_of_year_group_login', (req, res) => {
     res.render("pages/head_of_year_group_home");
+})
+
+app.get('/student_login', (req, res) => {
+    res.render("pages/student_home");
+})
+
+app.get('/teacher_login', (req, res) => {
+    res.render("pages/teacher_home");
 })
 
 //create class page
@@ -71,14 +79,14 @@ app.post('/enrollment_add', (req, res) => {
 app.get('/all_teachers_classes', (req, res) => {
   connection.query('SELECT teachers.id, email, first_name, last_name, class_code FROM teachers LEFT JOIN classes ON teachers.id = classes.teacher_id;', function (error, results, fields) {
      if (error) throw res.status(400).send(error);
-     res.render("pages/teachers",{data:dataformat(results)});
+     res.render("pages/teachers",{data:peopleformat(results)});
   });
 })
 
 app.get('/all_students_classes', (req, res) => {
     connection.query('SELECT students.id, email, first_name, last_name, class_code FROM students LEFT JOIN enrollments ON students.id = enrollments.student_id LEFT JOIN classes ON classes.id = enrollments.class_id;', function (error, results, fields) {
        if (error) throw res.status(400).send(error);
-       res.render("pages/students",{data:dataformat(results)});
+       res.render("pages/students",{data:peopleformat(results)});
     });
 })
 
@@ -88,6 +96,29 @@ app.get('/enroll', (req, res) => {
   connection.query(q1+q2, function (error, results, fields) {
      if (error) throw res.status(400).send(error);
      res.render("pages/enroll",{students:results[0],classes:results[1]});
+  });
+})
+
+app.post('/search_student', (req, res) => {
+  connection.query(`SELECT first_name, last_name, class_code FROM students INNER JOIN enrollments ON students.id = enrollments.student_id INNER JOIN classes ON classes.id = enrollments.class_id WHERE email='${req.body.email}'`, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     if (results.length>0){
+       res.render("pages/student_home",{student:oneClassFormat(results)});
+     } else {
+       res.render("pages/student_home");
+     }
+  });
+})
+
+app.post('/search_teacher', (req, res) => {
+  connection.query(`SELECT first_name, last_name, class_code FROM teachers LEFT JOIN classes ON teachers.id = classes.teacher_id WHERE email='${req.body.email}'`, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     if (results.length>0){
+       // res.send(oneClassFormat(results));
+       res.render("pages/teacher_home",{teacher:oneClassFormat(results)});
+     } else {
+       res.render("pages/teacher_home");
+     }
   });
 })
 

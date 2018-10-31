@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body class="container">
+
+	<header>
+		<% include ../partials/teacher_header %>
+	</header>
+
+	<div>
+    <form name="form1" method="POST" action="/search_teacher">
+    <table>
+        <tr>
+        <td>Enter email: </td>
+        <td><input type="text" name="email" ></td>
+        </tr>
+        <tr>
+        <td><input type="submit" value="Search" ></td>
+        </tr>
+    </table>
+    </form>
+		<%if (locals.teacher) { %>
+			<h1><%= `${teacher.first_name} ${teacher.last_name}`%></h1>
+			<% for(let i = 0; i < teacher.classes.length; i++) { %>
+				<div>
+					<%= teacher.classes[i] %>
+				</div>
+			<% } %>
+		<% } %>
+	</div>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+</html>
