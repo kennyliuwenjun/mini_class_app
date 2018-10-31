@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body class="container">
+
+	<header>
+		<% include ../partials/head_of_year_group_header %>
+	</header>
+
+	<div>
+		<h1>Create a Class</h1>
+    <form name="form1" method="POST" action="/class_add">
+    <table>
+        <tr>
+        <td>Class Code:</td>
+        <td><input type="text" name="class_code" ></td>
+        </tr>
+        <tr>
+        <td>Teacher:</td>
+				<td>
+				<select name="teacher">
+				<% for ( let i = 0; i < teachers.length; i++ ) { %>
+					<option value="<%= teachers[i].id%>" ><%= `${teachers[i].first_name} ${teachers[i].last_name}` %></option>
+				<% } %>
+				</select>
+				</td>
+        </tr>
+        <tr>
+        <td colspan="2"><input type="submit" value="Create" ></td>
+        </tr>
+    </table>
+    </form>
+	</div>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+</html>

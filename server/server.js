@@ -2,12 +2,16 @@ const path = require('path');
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser  = require("body-parser");
+const {dataformat} = require("./utils");
 
 const app = express();
 // const clientPtah = path.join(__dirname,'../client');
 const port = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(bodyParser.json());
 // app.use(express.static(clientPtah));
 
@@ -15,37 +19,76 @@ const connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : 'password',
-  database : 'mini_class_app'
+  database : 'mini_class_app',
+  multipleStatements: true
 });
 
 app.get('/', (req, res) => {
     res.render("pages/main_home");
 })
 
+//show teachers page
 app.get('/head_of_year_group_login', (req, res) => {
     res.render("pages/head_of_year_group_home");
 })
 
+//create class page
+app.get('/create_class', (req, res) => {
+  connection.query('SELECT * from teachers;', function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.render("pages/create_class",{teachers:results});
+  });
+})
+
+app.get('/create_teacher', (req, res) => {
+   res.render("pages/create_teacher");
+})
+
+app.post('/class_add', (req, res) => {
+  const q = `INSERT INTO classes(class_code, teacher_id) VALUES('${req.body.class_code}', ${req.body.teacher});`
+  connection.query(q, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.redirect("all_teachers_classes");
+  });
+})
+
+app.post('/teacher_add', (req, res) => {
+  const q = `INSERT INTO teachers(email, first_name, last_name) VALUES('${req.body.email}', '${req.body.first_name}', '${req.body.last_name}');`
+  connection.query(q, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.redirect("all_teachers_classes");
+  });
+})
+
+app.post('/enrollment_add', (req, res) => {
+  const q = `INSERT INTO enrollments (student_id, class_id) VALUES(${req.body.student}, ${req.body.class});`
+  connection.query(q, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.redirect("all_students_classes");
+  });
+})
+
 app.get('/all_teachers_classes', (req, res) => {
-    connection.query('SELECT teachers.id, email, first_name, last_name, class_code FROM teachers LEFT JOIN classes ON teachers.id = classes.teacher_id;', function (error, results, fields) {
+  connection.query('SELECT teachers.id, email, first_name, last_name, class_code FROM teachers LEFT JOIN classes ON teachers.id = classes.teacher_id;', function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.render("pages/teachers",{data:dataformat(results)});
+  });
+})
+
+app.get('/all_students_classes', (req, res) => {
+    connection.query('SELECT students.id, email, first_name, last_name, class_code FROM students LEFT JOIN enrollments ON students.id = enrollments.student_id LEFT JOIN classes ON classes.id = enrollments.class_id;', function (error, results, fields) {
        if (error) throw res.status(400).send(error);
-       const data = {};
-       for (row in results){
-         let teacher = results[row];
-         if (data[teacher.id]){
-           data[teacher.id]['classes'].push(teacher.class_code);
-         } else {
-           data[teacher.id] = {
-             classes : [teacher.class_code],
-             email : teacher.email,
-             first_name : teacher.first_name,
-             last_name : teacher.last_name
-           }
-         }
-       }
-       // res.send(data)
-       res.render("pages/teachers",{data});
+       res.render("pages/students",{data:dataformat(results)});
     });
+})
+
+app.get('/enroll', (req, res) => {
+  const q1 = 'SELECT * FROM students;';
+  const q2 = 'SELECT * FROM classes;'
+  connection.query(q1+q2, function (error, results, fields) {
+     if (error) throw res.status(400).send(error);
+     res.render("pages/enroll",{students:results[0],classes:results[1]});
+  });
 })
 
 

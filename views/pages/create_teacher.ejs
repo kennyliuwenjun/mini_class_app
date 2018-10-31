@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body class="container">
+
+	<header>
+		<% include ../partials/head_of_year_group_header %>
+	</header>
+
+	<div>
+		<h1>Create Teacher</h1>
+    <form name="form1" method="POST" action="/teacher_add">
+    <table>
+        <tr>
+        <td>Email:</td>
+        <td><input type="text" name="email" ></td>
+        </tr>
+				<tr>
+        <td>First Name:</td>
+        <td><input type="text" name="first_name" ></td>
+        </tr>
+				<tr>
+        <td>Last Name:</td>
+        <td><input type="text" name="last_name" ></td>
+        </tr>
+        <tr>
+        <td colspan="2"><input type="submit" value="Create" ></td>
+        </tr>
+    </table>
+    </form>
+	</div>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+</html>
