@@ -114,7 +114,6 @@ app.post('/search_teacher', (req, res) => {
   connection.query(`SELECT first_name, last_name, class_code FROM teachers LEFT JOIN classes ON teachers.id = classes.teacher_id WHERE email='${req.body.email}'`, function (error, results, fields) {
      if (error) throw res.status(400).send(error);
      if (results.length>0){
-       // res.send(oneClassFormat(results));
        res.render("pages/teacher_home",{teacher:oneClassFormat(results)});
      } else {
        res.render("pages/teacher_home");
