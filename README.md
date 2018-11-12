@@ -4,7 +4,7 @@
 - NodeJs + Express
 - ejs
 - bootstrap
-- mohca
+- mocha
 
 ## setup:
 1. run `npm install` to get all package needed
