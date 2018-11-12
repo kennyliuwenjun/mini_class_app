@@ -8,7 +8,7 @@
 
 ## setup:
 1. run `npm install` to get all package needed
-2. in mysql CLI run `source server/sql/init.sql` for initiate database and `source server/sql/testing_seed.sql` for seed data.
+2. in mysql CLI run `source server/sql/init.sql` for initiating database, then `source server/sql/testing_seed.sql` for seeding data.
 3. run `node server/server.js` to start the server.
 4. localhost:8080
 
